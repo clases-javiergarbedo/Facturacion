@@ -6,7 +6,12 @@
 
 package facturacion;
 
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JLabel;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -19,9 +24,41 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
+        
+        //Asignar la lista de datos a la tabla
         ModeloTabla modelo = new ModeloTabla();
         modelo.setDataList(list1);
         jTable1.setModel(modelo);
+        
+        //Alinear a la derecha las cantidades
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT );
+        jTable1.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
+        //Dar formato a los precios
+        jTable1.getColumnModel().getColumn(2).setCellRenderer(new PrecioRenderer());
+        //Dar formato a los porcentajes
+        jTable1.getColumnModel().getColumn(3).setCellRenderer(new PercentRenderer());
+        
+        //Cambiar ancho de columnas
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(67);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(156);
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(82);
+        jTable1.getColumnModel().getColumn(3).setPreferredWidth(58);
+        
+        //Sólo se permite seleccionar un registro
+        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); 
+        //Detectar cambio de selección en la tabla
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int indiceFilaSeleccionada = jTable1.getSelectedRow();
+                FactDetalle factDetalle = list1.get(indiceFilaSeleccionada);
+                panelDetalle1.setFactDetalle(factDetalle);
+                panelDetalle1.showData();                
+            }
+            
+        });
     }
 
     /**
@@ -36,19 +73,14 @@ public class Main extends javax.swing.JFrame {
         entityManager1 = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("FacturacionPU").createEntityManager();
         query1 = java.beans.Beans.isDesignTime() ? null : entityManager1.createQuery("SELECT f FROM FactDetalle f");
         list1 = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : query1.getResultList();
-        jButton1 = new javax.swing.JButton();
         panelDetalle1 = new facturacion.PanelDetalle();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        panelDetalle1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -63,6 +95,13 @@ public class Main extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -70,12 +109,12 @@ public class Main extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelDetalle1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(93, Short.MAX_VALUE))
+                        .addComponent(panelDetalle1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1))
+                .addContainerGap(89, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -93,9 +132,10 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        FactDetalle factDetalle = list1.get(0);
-//        panelDetalle1.setFactDetalle(factDetalle);
-//        panelDetalle1.showData();
+        System.out.println(jTable1.getColumnModel().getColumn(0).getWidth());
+        System.out.println(jTable1.getColumnModel().getColumn(1).getWidth());
+        System.out.println(jTable1.getColumnModel().getColumn(2).getWidth());
+        System.out.println(jTable1.getColumnModel().getColumn(3).getWidth());
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
