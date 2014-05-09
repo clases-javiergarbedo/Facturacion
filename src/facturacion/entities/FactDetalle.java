@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package facturacion;
+package facturacion.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -142,7 +142,7 @@ public class FactDetalle implements Serializable {
 
     @Override
     public String toString() {
-        return "facturacion.FactDetalle[ id=" + id + " ]";
+        return "facturacion.entities.FactDetalle[ id=" + id + " ]";
     }
     
 }

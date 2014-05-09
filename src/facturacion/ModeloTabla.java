@@ -1,5 +1,6 @@
 package facturacion;
 
+import facturacion.entities.FactDetalle;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 

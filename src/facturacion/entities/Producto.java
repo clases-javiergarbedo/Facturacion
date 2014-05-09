@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package facturacion;
+package facturacion.entities;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -118,7 +118,7 @@ public class Producto implements Serializable {
 
     @Override
     public String toString() {
-        return "facturacion.Producto[ id=" + id + " ]";
+        return "facturacion.entities.Producto[ id=" + id + " ]";
     }
     
 }

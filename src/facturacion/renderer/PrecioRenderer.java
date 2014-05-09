@@ -1,12 +1,12 @@
-package facturacion;
+package facturacion.renderer;
 
 import java.text.NumberFormat;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class PercentRenderer extends DefaultTableCellRenderer {
+public class PrecioRenderer extends DefaultTableCellRenderer {
     
-    public PercentRenderer() { 
+    public PrecioRenderer() { 
         setHorizontalAlignment(SwingConstants.RIGHT); 
     } 
 
@@ -15,9 +15,9 @@ public class PercentRenderer extends DefaultTableCellRenderer {
         Object result = aValue; 
         if ((aValue != null) && (aValue instanceof Number)) {
             Number numberValue = (Number) aValue; 
-            NumberFormat formatter = NumberFormat.getPercentInstance();
+            NumberFormat formatter = NumberFormat.getCurrencyInstance();
             result = formatter.format(numberValue.doubleValue());
-        }
+        } 
         super.setValue(result); 
-    }
+    }     
 }

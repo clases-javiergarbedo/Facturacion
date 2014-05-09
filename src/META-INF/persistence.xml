@@ -3,7 +3,8 @@
   <persistence-unit name="FacturacionPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>facturacion.FactDetalle</class>
-    <class>facturacion.Producto</class>
+    <class>facturacion.entities.Producto</class>
+    <class>facturacion.entities.FactDetalle</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/facturacion?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.password" value=""/>
