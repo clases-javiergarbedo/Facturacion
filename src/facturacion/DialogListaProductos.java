@@ -1,19 +1,25 @@
 package facturacion;
 
+import facturacion.entities.Producto;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-
 
 public class DialogListaProductos extends javax.swing.JDialog {
 
     private Connection conexion = null;
+    private ArrayList<Producto> listaProductos = new ArrayList();
+    
     private final String DB_HOST = "localhost";
     private final String DB_NAME = "facturacion";
-    private final String DB_USER = "roota";
+    private final String DB_USER = "root";
     private final String DB_PASSWORD = "";
 
     /**
@@ -22,15 +28,19 @@ public class DialogListaProductos extends javax.swing.JDialog {
     public DialogListaProductos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        //Centrar esta ventana respecto al padre
+        setLocationRelativeTo(parent);
+        
         conectarBD();
+        loadList();
     }
 
-    private void conectarBD(){
+    private void conectarBD() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             conexion = DriverManager.getConnection(
-                       "jdbc:mysql://"+DB_HOST+"/"+DB_NAME, 
-                       DB_USER, DB_PASSWORD);
+                    "jdbc:mysql://" + DB_HOST + "/" + DB_NAME,
+                    DB_USER, DB_PASSWORD);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DialogListaProductos.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "No se ha encontrado la librería MySQL", "Error", JOptionPane.ERROR_MESSAGE);
@@ -41,17 +51,34 @@ public class DialogListaProductos extends javax.swing.JDialog {
             Logger.getLogger(DialogListaProductos.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "No se ha podido conectar con la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
-        } catch (SQLException ex) {            
+        } catch (SQLException ex) {
             Logger.getLogger(DialogListaProductos.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "No se ha podido conectar con la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
     }
-    
+
     private void loadList() {
-        
+        try {
+            Statement stmt = conexion.createStatement();
+            ResultSet rsProductos = stmt.executeQuery(
+                    "SELECT * FROM Producto");
+            while (rsProductos.next()) {
+                //Obtener los datos del producto desde la BD
+                int id = rsProductos.getInt("id");
+                String codigo = rsProductos.getString("codigo");
+                String nombre = rsProductos.getString("nombre");
+                //Guardar el producto en una lista
+                Producto producto = new Producto(id, codigo, nombre);
+                listaProductos.add(producto);
+            }
+            jList1.setListData(listaProductos.toArray());
+        } catch (SQLException ex) {
+            Logger.getLogger(DialogListaProductos.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Se ha producido un error al consultar la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
