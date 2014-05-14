@@ -1,6 +1,7 @@
 package facturacion;
 
 import facturacion.entities.Producto;
+import facturacion.renderer.ProductoListRenderer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -15,12 +16,16 @@ import javax.swing.JOptionPane;
 public class DialogListaProductos extends javax.swing.JDialog {
 
     private Connection conexion = null;
-    private ArrayList<Producto> listaProductos = new ArrayList();
-    
+    private Producto productoSelec = null;
+
     private final String DB_HOST = "localhost";
     private final String DB_NAME = "facturacion";
     private final String DB_USER = "root";
-    private final String DB_PASSWORD = "";
+    private final String DB_PASSWORD = "root";
+
+    public Producto getProductoSelec() {
+        return productoSelec;
+    }
 
     /**
      * Creates new form dialogListaProductos
@@ -30,7 +35,7 @@ public class DialogListaProductos extends javax.swing.JDialog {
         initComponents();
         //Centrar esta ventana respecto al padre
         setLocationRelativeTo(parent);
-        
+
         conectarBD();
         loadList();
     }
@@ -59,6 +64,12 @@ public class DialogListaProductos extends javax.swing.JDialog {
     }
 
     private void loadList() {
+        //Crear un modelo para la lista
+        DefaultListModel listModel = new DefaultListModel();
+        jList1.setModel(listModel);
+        //Asignar el renderer para mostrar los objetos como se desea
+        jList1.setCellRenderer(new ProductoListRenderer());
+        
         try {
             Statement stmt = conexion.createStatement();
             ResultSet rsProductos = stmt.executeQuery(
@@ -68,11 +79,10 @@ public class DialogListaProductos extends javax.swing.JDialog {
                 int id = rsProductos.getInt("id");
                 String codigo = rsProductos.getString("codigo");
                 String nombre = rsProductos.getString("nombre");
-                //Guardar el producto en una lista
+                //Guardar el producto en la lista
                 Producto producto = new Producto(id, codigo, nombre);
-                listaProductos.add(producto);
+                listModel.addElement(producto);
             }
-            jList1.setListData(listaProductos.toArray());
         } catch (SQLException ex) {
             Logger.getLogger(DialogListaProductos.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Se ha producido un error al consultar la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -102,6 +112,11 @@ public class DialogListaProductos extends javax.swing.JDialog {
         jScrollPane1.setViewportView(jList1);
 
         jButtonSeleccionar.setText("Seleccionar");
+        jButtonSeleccionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSeleccionarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -128,6 +143,14 @@ public class DialogListaProductos extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSeleccionarActionPerformed
+        //Guardar el producto que está seleccionado en la lista
+        productoSelec = (Producto)jList1.getSelectedValue();
+        //Cerrar la ventana de diálogo
+        setVisible(false);
+        dispose();
+    }//GEN-LAST:event_jButtonSeleccionarActionPerformed
 
     /**
      * @param args the command line arguments

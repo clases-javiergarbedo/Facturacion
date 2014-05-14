@@ -1,11 +1,17 @@
 package facturacion;
 
 import facturacion.entities.FactDetalle;
+import facturacion.entities.Producto;
 import java.awt.Frame;
 
 public class PanelDetalle extends javax.swing.JPanel {
 
     private FactDetalle factDetalle;
+    private Producto producto;
+
+    public Producto getProducto() {
+        return producto;
+    }
         
     /**
      * Creates new form PanelDetalle
@@ -23,10 +29,17 @@ public class PanelDetalle extends javax.swing.JPanel {
     }    
     
     public void showData() {
-        jTextFieldProductoId.setText(String.valueOf(factDetalle.getProductoId()));
+        producto = factDetalle.getProductoId();
+        showProducto();
         jTextFieldPrecioUnit.setText(String.valueOf(factDetalle.getPrecioUnit()));
         jTextFieldCantidad.setText(String.valueOf(factDetalle.getCantidad()));
         jTextFieldIVA.setText(String.valueOf(factDetalle.getIva()));
+    }
+    
+    public void showProducto() {
+        if(producto != null) {
+            jTextFieldProductoId.setText(producto.getCodigo() + " - " + producto.getNombre());
+        }
     }
     
     /**
@@ -62,9 +75,10 @@ public class PanelDetalle extends javax.swing.JPanel {
 
         jTextFieldIVA.setColumns(5);
 
+        jTextFieldProductoId.setEditable(false);
         jTextFieldProductoId.setColumns(5);
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Buscar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -96,8 +110,8 @@ public class PanelDetalle extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldProductoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                        .addComponent(jTextFieldProductoId, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)))
                 .addContainerGap())
         );
@@ -130,6 +144,9 @@ public class PanelDetalle extends javax.swing.JPanel {
         Frame frameParent = Frame.getFrames()[0];
         DialogListaProductos dialogListaProductos = new DialogListaProductos(frameParent, true);
         dialogListaProductos.setVisible(true);
+        //Obtener el producto que se ha seleccionado en la ventana de diálogo
+        producto = dialogListaProductos.getProductoSelec();
+        showProducto();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
